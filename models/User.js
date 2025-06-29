@@ -1,5 +1,6 @@
 const getPool = require("../data/konektor");
 const AppError = require("./AppError");
+const jwt = require("jsonwebtoken");
 
 class User {
   constructor(ime, email, lozinka, uloga, sluzba, avatar) {
