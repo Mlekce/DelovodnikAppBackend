@@ -44,11 +44,9 @@ class User {
           this.avatar,
         ]);
 
-        if (rezultat[0].affectedRows === 1) {
-          return true;
-        }
-        return false;
+        return rezultat[0].affectedRows === 1
       }
+      return false;
     } catch (error) {
       throw new AppError(`Greska u signup funkciji ${error.message}`, 500);
     }
@@ -61,7 +59,7 @@ class User {
     if (!regex.test(passwd)) {
       return false;
     }
-    return passwd;
+    return true;
   }
 
   static async hashLozinke(lozinka) {
@@ -79,17 +77,17 @@ class User {
     });
   }
 
-  async login() {
+  static async login(email, lozinka) {
     const pool = await getPool();
     try {
       const upit = "SELECT * FROM users WHERE email = ?";
-      const [rezultat] = await pool.query(upit, [this.email]);
+      const [rezultat] = await pool.query(upit, [email]);
       if (rezultat.length === 0) {
         return false;
       }
       const korisnik = rezultat[0];
       const lozinkaOk = await User.proveriLozinku(
-        this.lozinka,
+        lozinka,
         korisnik.lozinka
       );
       if (!lozinkaOk) {
