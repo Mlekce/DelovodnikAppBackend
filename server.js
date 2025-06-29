@@ -11,3 +11,14 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+
+app.listen(4000, (error) => {
+    if(error){
+        console.error(error.message)
+    }
+    console.log("Server started at port 4000");
+
+} 
+    
+)
