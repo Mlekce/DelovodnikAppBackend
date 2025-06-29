@@ -53,7 +53,7 @@ class User {
     }
   }
 
-  static async proveraLozinke(password) {
+  static async validirajLozinku(password) {
     const passwd = validator.escape(password.trim());
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
@@ -70,6 +70,50 @@ class User {
 
   static async proveriLozinku(unetaLozinka, hesovanaLozinka) {
     return await bcrypt.compare(unetaLozinka, hesovanaLozinka);
+  }
+
+  static generisiToken(payload) {
+    return jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || "1d",
+    });
+  }
+
+  async login() {
+    const pool = await getPool();
+    try {
+      const upit = "SELECT * FROM users WHERE email = ?";
+      const [rezultat] = await pool.query(upit, [this.email]);
+      if (rezultat.length === 0) {
+        return false;
+      }
+      const korisnik = rezultat[0];
+      const lozinkaOk = await User.proveriLozinku(
+        this.lozinka,
+        korisnik.lozinka
+      );
+      if (!lozinkaOk) {
+        return false;
+      }
+      const payload = {
+        id: korisnik.id,
+        email: korisnik.email,
+        uloga: korisnik.uloga,
+      };
+      const token = User.generisiToken(payload);
+      return {
+        token,
+        korisnik: {
+          id: korisnik.id,
+          ime: korisnik.ime,
+          email: korisnik.email,
+          uloga: korisnik.uloga,
+          sluzba: korisnik.sluzba,
+          avatar: korisnik.avatar,
+        },
+      };
+    } catch (error) {
+      throw new AppError(`Greška u login funkciji: ${error.message}`,500);
+    }
   }
 }
 
