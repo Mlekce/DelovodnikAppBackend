@@ -38,7 +38,7 @@ async function login(req, res) {
     if (!email || !lozinka) {
       return res.status(400).json({ poruka: "Email i lozinka su obavezni." });
     }
-    
+
     const rezultat = await User.login(email, lozinka);
     if (!rezultat) {
       return res
@@ -52,8 +52,22 @@ async function login(req, res) {
   }
 }
 
-function me(req, res) {
-  return;
+async function me(req, res) {
+  try {
+    const { id, email, uloga } = req.user;
+
+    const pool = await getPool();
+    const [rezultat] = await pool.query("SELECT id, ime, email, uloga, sluzba, avatar FROM users WHERE id = ?", [id]);
+    
+    if (rezultat.length === 0) {
+      return res.status(404).json({ poruka: "Korisnik nije pronađen." });
+    }
+
+    return res.status(200).json(rezultat[0]);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ poruka: "Greška prilikom učitavanja korisnika." });
+  }
 }
 
 module.exports = {
