@@ -114,6 +114,20 @@ class User {
       throw new AppError(`Greška u login funkciji: ${error.message}`,500);
     }
   }
+
+  static async povuciPodatke(idKor){
+    try {
+      const pool = await getPool();
+      let upit = "SELECT id, ime, email, uloga, sluzba, avatar FROM users WHERE id = ?";
+      let [rezultat] = await pool.query(upit, [idKor]);
+      if(rezultat.length == 0){
+        return false
+      }
+      return rezultat[0];
+    } catch (error) {
+      throw new AppError(`Greška u povciuPodatke funkciji: ${error.message}`,500);
+    }
+  }
 }
 
 module.exports = User;
