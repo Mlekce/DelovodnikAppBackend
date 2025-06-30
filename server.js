@@ -12,6 +12,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function errorHandler(err, req, res, next) {
+  console.error("Greška:", err.message);
+
+  const status = err.status || 500;
+  const poruka = err.message || "Greška na serveru";
+
+  res.status(status).json({ poruka });
+}
 
 app.listen(4000, (error) => {
     if(error){
