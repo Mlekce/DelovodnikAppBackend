@@ -44,7 +44,7 @@ class User {
           this.avatar,
         ]);
 
-        return rezultat[0].affectedRows === 1
+        return rezultat[0].affectedRows === 1;
       }
       return false;
     } catch (error) {
@@ -86,10 +86,7 @@ class User {
         return false;
       }
       const korisnik = rezultat[0];
-      const lozinkaOk = await User.proveriLozinku(
-        lozinka,
-        korisnik.lozinka
-      );
+      const lozinkaOk = await User.proveriLozinku(lozinka, korisnik.lozinka);
       if (!lozinkaOk) {
         return false;
       }
@@ -111,21 +108,49 @@ class User {
         },
       };
     } catch (error) {
-      throw new AppError(`Greška u login funkciji: ${error.message}`,500);
+      throw new AppError(`Greška u login funkciji: ${error.message}`, 500);
     }
   }
 
-  static async povuciPodatke(idKor){
+  static async povuciPodatke(idKor) {
     try {
       const pool = await getPool();
-      let upit = "SELECT id, ime, email, uloga, sluzba, avatar FROM users WHERE id = ?";
+      let upit =
+        "SELECT id, ime, email, uloga, sluzba, avatar FROM users WHERE id = ?";
       let [rezultat] = await pool.query(upit, [idKor]);
-      if(rezultat.length == 0){
-        return false
+      if (rezultat.length == 0) {
+        return false;
       }
       return rezultat[0];
     } catch (error) {
-      throw new AppError(`Greška u povciuPodatke funkciji: ${error.message}`,500);
+      throw new AppError(
+        `Greška u povciuPodatke funkciji: ${error.message}`,
+        500
+      );
+    }
+  }
+
+  static async PrikaziSveKorisnike() {
+    try {
+      const pool = await getPool();
+      const upit = "SELECT * FROM users";
+      const [rezultat] = await pool.query(upit);
+      return {
+        sviKorisnici: rezultat[0],
+        brojKorisnika: rezultat[0].length,
+      };
+    } catch (error) {
+      throw new AppError("Greska u funkciji PrikaziSveKorisnike", 500);
+    }
+  }
+
+  static async dodajAvatar(korId, imeFajla) {
+    try {
+      let pool = await getPool();
+      let upit = "UPDATE users SET avatar = ? WHERE id=(?)";
+      await pool.query(upit, [imeFajla, korId]);
+    } catch (error) {
+      throw new AppError("Greška u postaviAvatar: " + error.message, 500);
     }
   }
 }
