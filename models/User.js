@@ -124,7 +124,7 @@ class User {
       return rezultat[0];
     } catch (error) {
       throw new AppError(
-        `Greška u povciuPodatke funkciji: ${error.message}`,
+        `Greška u povuciPodatke funkciji: ${error.message}`,
         500
       );
     }
@@ -151,6 +151,32 @@ class User {
       await pool.query(upit, [imeFajla, korId]);
     } catch (error) {
       throw new AppError("Greška u postaviAvatar: " + error.message, 500);
+    }
+  }
+
+  static async zameniLozinku(korId, staraLozinka, novaLozinka) {
+    try {
+      let pool = await getPool();
+      let upit = "SELECT lozinka FROM users WHERE id = ?";
+      let [rezultat] = await pool.query(upit, [korId]);
+      if (rezultat.length == 0) {
+        return false;
+      }
+      const lozinkaOk = await User.proveriLozinku(
+        staraLozinka,
+        rezultat[0].lozinka
+      );
+      if (!lozinkaOk) {
+        return false;
+      }
+      upit = "UPDATE users SET lozinka = ? WHERE id=(?)";
+      await pool.query(upit, [novaLozinka, korId]);
+      return true;
+    } catch (error) {
+      throw new AppError(
+        "Greska u funkciji zameniLozinku" + error.message,
+        500
+      );
     }
   }
 }
