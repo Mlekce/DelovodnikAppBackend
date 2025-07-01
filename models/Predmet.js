@@ -44,7 +44,7 @@ class Predmet {
 
   static async sviPredmetiKorisnika(korisnikId) {
     const pool = await getPool();
-    const upit = "SELECT * FROM predmeti WHERE korisnik_id = ?";
+    const upit = "SELECT * FROM predmeti WHERE korisnik_id = ? ORDER BY datum_unosa DESC";
     const [rezultat] = await pool.query(upit, [korisnikId]);
     return rezultat;
   }
