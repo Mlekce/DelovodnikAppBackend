@@ -86,4 +86,5 @@ module.exports = {
   avatar,
   detaljiKorisnik,
   promeniLozinku,
+  izmeniPodatke
 };
