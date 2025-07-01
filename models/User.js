@@ -179,6 +179,13 @@ class User {
       );
     }
   }
+
+  static async izmenaPodatakaKorisnika(id, ime, uloga, sluzba) {
+    const pool = await getPool();
+    const upit = "UPDATE users SET ime = ?, uloga = ?, sluzba = ? WHERE id = ?";
+    const [rezultat] = await pool.query(upit, [ime, uloga, sluzba, id]);
+    return rezultat.affectedRows === 1;
+  }
 }
 
 module.exports = User;

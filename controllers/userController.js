@@ -43,11 +43,42 @@ async function promeniLozinku(req, res) {
     let id = req.user.id;
     let rezultat = await User.zameniLozinku(id, staraLozinka, novaLozinka);
     rezultat
-      ? res.status(201).json("Uspesno zamenjena lozinka!")
-      : res.status(400).json("Doslo je do greske pri zameni lozinke!");
+      ? res.status(201).json({ poruka: "Uspesno zamenjena lozinka!" })
+      : res
+          .status(400)
+          .json({ poruka: "Doslo je do greske pri zameni lozinke!" });
     return;
   } catch (error) {
     throw new AppError("Greska u funkciji promeniLozinku" + error.message, 500);
+  }
+}
+
+async function izmeniPodatke(req, res) {
+  try {
+    const { ime, uloga, sluzba } = req.body;
+    const korId = req.user?.id;
+
+    if (korId && ime && uloga && sluzba) {
+      const uspesno = await User.izmenaPodatakaKorisnika(
+        korId,
+        ime,
+        uloga,
+        sluzba
+      );
+
+      if (uspesno) {
+        return res.status(201).json({ poruka: "Izmene uspešno snimljene." });
+      } else {
+        return res
+          .status(500)
+          .json({ poruka: "Došlo je do greške prilikom izmene." });
+      }
+    }
+
+    return res.status(409).json({ poruka: "Prazan ili neispravan zahtev." });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ poruka: "Greška na serveru." });
   }
 }
 
