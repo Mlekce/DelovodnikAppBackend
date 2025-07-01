@@ -24,6 +24,46 @@ async function sviPredmeti(req, res) {
   }
 }
 
+async function kreirajPredmet(req, res) {
+  try {
+    const {
+      broj_predmeta,
+      stranka,
+      referent,
+      datum_podnosenja,
+      datum_pravosnaznosti,
+      napomena,
+      status,
+    } = req.body;
+
+    const korisnik_id = req.user.id;
+
+    if (!korisnik_id || !broj_predmeta || !stranka || !datum_podnosenja) {
+      return res.status(400).json({ poruka: "Nedostaju obavezna polja." });
+    }
+
+    const predmet = new Predmet(
+      broj_predmeta,
+      stranka,
+      referent,
+      datum_podnosenja,
+      datum_pravosnaznosti,
+      napomena,
+      status,
+      korisnik_id
+    );
+
+    const predmetId = await predmet.dodajPredmet();
+
+    return res
+      .status(201)
+      .json({ poruka: "Predmet uspešno dodat.", id: predmetId });
+  } catch (error) {
+    throw new AppError("Greska u kreirajPredmet funkciji", 500);
+  }
+}
+
 module.exports = {
   sviPredmeti,
+  kreirajPredmet,
 };
