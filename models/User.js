@@ -53,7 +53,7 @@ class User {
   }
 
   static async validirajLozinku(password) {
-    const passwd = validator.escape(password.trim());
+    const passwd = validator.trim(password());
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
     if (!regex.test(passwd)) {
