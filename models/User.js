@@ -136,8 +136,8 @@ class User {
       const upit = "SELECT * FROM users";
       const [rezultat] = await pool.query(upit);
       return {
-        sviKorisnici: rezultat[0],
-        brojKorisnika: rezultat[0].length,
+        sviKorisnici: rezultat,
+        brojKorisnika: rezultat.length,
       };
     } catch (error) {
       throw new AppError("Greska u funkciji PrikaziSveKorisnike", 500);

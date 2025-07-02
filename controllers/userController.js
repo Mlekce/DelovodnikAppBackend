@@ -1,5 +1,5 @@
 const path = require("path");
-const { AppError } = require("../models/AppError");
+const  AppError  = require("../models/AppError");
 const User = require(path.join(__dirname, "..", "models", "User.js"));
 
 async function avatar(req, res) {
@@ -82,9 +82,20 @@ async function izmeniPodatke(req, res) {
   }
 }
 
+async function listaKorisnika(req, res){
+  try {
+    let {sviKorisnici, brojKorisnika} = await User.PrikaziSveKorisnike();
+    return res.status(200).json({poruka : { sviKorisnici, brojKorisnika}})
+  } catch (error) {
+    console.error(error);
+    throw new AppError("Greska u funkciji listaKorisnika", 500);
+  }
+}
+
 module.exports = {
   avatar,
   detaljiKorisnik,
   promeniLozinku,
-  izmeniPodatke
+  izmeniPodatke,
+  listaKorisnika
 };

@@ -6,3 +6,5 @@ function samoAdmin(req, res, next) {
   }
   next();
 }
+
+module.exports = samoAdmin;

@@ -1,16 +1,17 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import mysql2 from "mysql2/promise";
-import cors from "cors";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken"
+const express = require("express");
+const cors = require("cors");
+require('dotenv').config()
 
-dotenv.config();
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes.js");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(authRoutes);
+app.use(errorHandler);
 
 function errorHandler(err, req, res, next) {
   console.error("Greška:", err.message);
@@ -28,5 +29,5 @@ app.listen(4000, (error) => {
     console.log("Server started at port 4000");
 
 } 
-    
+  
 )
