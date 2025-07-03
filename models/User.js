@@ -1,6 +1,8 @@
 const getPool = require("../data/konektor");
 const AppError = require("./AppError");
+const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 class User {
   constructor(ime, email, lozinka, uloga, sluzba, avatar) {
@@ -53,7 +55,7 @@ class User {
   }
 
   static async validirajLozinku(password) {
-    const passwd = validator.trim(password());
+    const passwd = validator.trim(password);
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
     if (!regex.test(passwd)) {

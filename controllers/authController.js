@@ -5,10 +5,9 @@ async function register(req, res) {
     const { ime, email, lozinka, uloga, sluzba, avatar } = req.body;
     let proveraLozinke = await User.validirajLozinku(lozinka);
     if (!proveraLozinke) {
-      res.status(400).json({
+      return res.status(400).json({
         poruka: "Lozinka je suvise kratka ili ne ispnjava kompleksnost.",
       });
-      return;
     }
 
     const enkriptovanaLozinka = await User.hashLozinke(lozinka);
