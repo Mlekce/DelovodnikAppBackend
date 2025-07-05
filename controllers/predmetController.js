@@ -1,4 +1,4 @@
-const { AppError } = require("../models/AppError");
+const AppError = require("../models/AppError");
 const Predmet = require("../models/Predmet");
 
 async function sviPredmeti(req, res) {
@@ -25,6 +25,7 @@ async function sviPredmeti(req, res) {
 }
 
 async function kreirajPredmet(req, res) {
+  console.log(req.body.predmet)
   try {
     const {
       broj_predmeta,
@@ -34,7 +35,7 @@ async function kreirajPredmet(req, res) {
       datum_pravosnaznosti,
       napomena,
       status,
-    } = req.body;
+    } = req.body.predmet;
 
     const korisnik_id = req.user.id;
 
@@ -59,6 +60,7 @@ async function kreirajPredmet(req, res) {
       .status(201)
       .json({ poruka: "Predmet uspešno dodat.", id: predmetId });
   } catch (error) {
+    console.error(error.message)
     throw new AppError("Greska u kreirajPredmet funkciji", 500);
   }
 }

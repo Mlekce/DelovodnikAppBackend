@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes.js");
+const predmetRoutes = require("./routes/predmetRoutes.js");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(authRoutes);
+app.use(predmetRoutes);
 app.use(errorHandler);
 
 function errorHandler(err, req, res, next) {
