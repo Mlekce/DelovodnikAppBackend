@@ -25,7 +25,7 @@ class Predmet {
   async dodajPredmet() {
     try {
       let pool = await getPool();
-      let upit = "INSERT INTO predmeti VALUES=(?,?,?,?,?,?,?,?)";
+      let upit = "INSERT INTO predmeti (broj_predmeta, ime_stranke, referent, datum_podnosenja, datum_pravosnaznosti, napomena, status, korisnik_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
       let [rezultat] = await pool.query(upit, [
         this.broj_predmeta,
         this.stranka,
