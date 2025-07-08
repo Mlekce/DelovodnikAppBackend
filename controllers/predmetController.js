@@ -24,6 +24,23 @@ async function sviPredmeti(req, res) {
   }
 }
 
+async function posebnaPretraga(req, res){
+  try {
+    const args = Object.entries(req.body.predmet);  // <-- ključno
+    let args2 = args.filter(([polje, vrednost]) => vrednost !== undefined && vrednost !== null && vrednost !== "");
+    let podaci = await Predmet.posebnaPretraga(...args2);
+    console.log(args,args2, podaci)
+    if (podaci) {
+      return res.status(200).json(podaci);
+    }
+
+    return res.status(400).json({ poruka: 'Greska na serveru!' });
+  } catch (error) {
+    console.error("Greška u posebnaPretraga:", error);
+    return res.status(500).json({ poruka: "Greška na serveru." });
+  }
+}
+
 async function kreirajPredmet(req, res) {
   console.log(req.body.predmet)
   try {
@@ -68,4 +85,5 @@ async function kreirajPredmet(req, res) {
 module.exports = {
   sviPredmeti,
   kreirajPredmet,
+  posebnaPretraga
 };

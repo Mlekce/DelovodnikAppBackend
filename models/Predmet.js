@@ -63,6 +63,27 @@ class Predmet {
     const [rezultat] = await pool.query(upit, [id, korisnikId]);
     return rezultat.affectedRows === 1;
   }
+
+  static async posebnaPretraga(...args){
+    try {
+      const pool = await getPool();
+      let uslovi = [];
+      let vrednosti = [];
+
+      args.forEach(([polje, vrednost], index) => {
+        uslovi.push(`${polje} = ?`);
+        vrednosti.push(vrednost);
+      });
+
+      let uslovniUpit = uslovi.length > 0 ? `WHERE ${uslovi.join(' AND ')}` : "";
+      let upit = `SELECT * FROM predmeti ${uslovniUpit}`;
+      let [rezultat] = await pool.query(upit, vrednosti);
+      return rezultat;
+
+    } catch (error) {
+      throw new AppError("Greska u funkciji posebnaPretraga!", 500);
+    }
+  }
 }
 
 module.exports = Predmet;
