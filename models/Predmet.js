@@ -64,26 +64,32 @@ class Predmet {
     return rezultat.affectedRows === 1;
   }
 
-  static async posebnaPretraga(...args){
-    try {
-      const pool = await getPool();
-      let uslovi = [];
-      let vrednosti = [];
+  static async posebnaPretraga(...args) {
+  try {
+    const pool = await getPool();
+    let uslovi = [];
+    let vrednosti = [];
 
-      args.forEach(([polje, vrednost], index) => {
+    args.forEach(([polje, vrednost]) => {
+      if (polje === "broj_predmeta" || polje === "ime_stranke" || polje === "referent") {
+        uslovi.push(`${polje} LIKE ?`);
+        vrednosti.push(`%${vrednost}%`);
+      } else {
         uslovi.push(`${polje} = ?`);
         vrednosti.push(vrednost);
-      });
+      }
+    });
 
-      let uslovniUpit = uslovi.length > 0 ? `WHERE ${uslovi.join(' AND ')}` : "";
-      let upit = `SELECT * FROM predmeti ${uslovniUpit}`;
-      let [rezultat] = await pool.query(upit, vrednosti);
-      return rezultat;
+    const uslovniUpit = uslovi.length > 0 ? `WHERE ${uslovi.join(" AND ")}` : "";
+    const upit = `SELECT * FROM predmeti ${uslovniUpit}`;
+    const [rezultat] = await pool.query(upit, vrednosti);
 
-    } catch (error) {
-      throw new AppError("Greska u funkciji posebnaPretraga!", 500);
-    }
+    return rezultat;
+  } catch (error) {
+    console.error("Greska u posebnaPretraga:", error);
+    throw new AppError("Greska u funkciji posebnaPretraga!", 500);
   }
+}
 }
 
 module.exports = Predmet;

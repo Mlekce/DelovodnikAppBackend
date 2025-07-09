@@ -29,7 +29,7 @@ async function posebnaPretraga(req, res){
     const args = Object.entries(req.body.predmet);  // <-- ključno
     let args2 = args.filter(([polje, vrednost]) => vrednost !== undefined && vrednost !== null && vrednost !== "");
     let podaci = await Predmet.posebnaPretraga(...args2);
-    console.log(args,args2, podaci)
+    console.log(args, args2, podaci)
     if (podaci) {
       return res.status(200).json(podaci);
     }
