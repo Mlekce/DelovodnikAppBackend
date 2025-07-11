@@ -107,6 +107,7 @@ class User {
           uloga: korisnik.uloga,
           sluzba: korisnik.sluzba,
           avatar: korisnik.avatar,
+          datum_registracije: korisnik.datum_registracije
         },
       };
     } catch (error) {

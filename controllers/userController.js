@@ -3,6 +3,7 @@ const  AppError  = require("../models/AppError");
 const User = require(path.join(__dirname, "..", "models", "User.js"));
 
 async function avatar(req, res) {
+  console.log(req.file, req.body)
   try {
     if (!req.file) {
       return res

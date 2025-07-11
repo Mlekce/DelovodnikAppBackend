@@ -28,7 +28,7 @@ const upload = multer({
         callback(null, true);
     },
     limits: {
-        fileSize: 1024 * 1024 // 1MB
+        fileSize: 8096 * 8096 // 1MB
     }
 }).single('avatar');
 

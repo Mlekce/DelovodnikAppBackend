@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config()
+const path = require('path');
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes.js");
@@ -8,11 +9,16 @@ const predmetRoutes = require("./routes/predmetRoutes.js");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true
+}));
 app.use(express.json());
+app.use("/avatars", express.static(path.join(__dirname, "uploads", "avatars")));
 
 app.use(authRoutes);
 app.use(predmetRoutes);
+app.use(userRoutes);
 app.use(errorHandler);
 
 function errorHandler(err, req, res, next) {
