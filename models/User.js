@@ -152,6 +152,11 @@ class User {
       let pool = await getPool();
       let upit = "UPDATE users SET avatar = ? WHERE id=(?)";
       await pool.query(upit, [imeFajla, korId]);
+      let rezultat = await User.povuciPodatke(korId);
+      if(!rezultat){
+        return false
+      }
+      return rezultat
     } catch (error) {
       throw new AppError("Greška u postaviAvatar: " + error.message, 500);
     }

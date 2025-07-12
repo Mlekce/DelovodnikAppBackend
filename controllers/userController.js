@@ -3,7 +3,6 @@ const  AppError  = require("../models/AppError");
 const User = require(path.join(__dirname, "..", "models", "User.js"));
 
 async function avatar(req, res) {
-  console.log(req.file, req.body)
   try {
     if (!req.file) {
       return res
@@ -13,12 +12,14 @@ async function avatar(req, res) {
     const korisnikId = req.user.id;
     const imeFajla = req.file.filename;
 
-    await User.dodajAvatar(korisnikId, imeFajla);
-
-    return res.status(201).json({ poruka: "Vas fajl je uspesno sacuvan!" });
+    let rezultat = await User.dodajAvatar(korisnikId, imeFajla);
+    if(rezultat){
+      return res.status(201).json({ poruka: "Vas fajl je uspesno sacuvan!", korisnik: rezultat })
+    }
+    return res.status(400).json({poruka: "Operacija nije uspela", korisnik: null});
   } catch (error) {
     console.log(error);
-    throw new AppError("Greska u avatr funkciji!", 500);
+    throw new AppError("Greska u avatar funkciji!", 500);
   }
 }
 
