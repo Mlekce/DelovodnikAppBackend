@@ -162,6 +162,21 @@ class User {
     }
   }
 
+  static async izmeniSluzbu(korId, sluzba){
+    try {
+      const pool = await getPool();
+      const upit = "UPDATE users SET sluzba = ? WHERE id=(?)";
+      await pool.query(upit, [sluzba, korId]);
+      let rezultat = await User.povuciPodatke(korId);
+      if(!rezultat){
+        return false
+      }
+      return rezultat
+    } catch (error) {
+      throw new AppError("Greška u izmeniSluzbu: " + error.message, 500);
+    }
+  }
+
   static async zameniLozinku(korId, staraLozinka, novaLozinka) {
     try {
       let pool = await getPool();

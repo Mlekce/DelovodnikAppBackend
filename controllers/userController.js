@@ -23,6 +23,23 @@ async function avatar(req, res) {
   }
 }
 
+async function izmeniSluzbu(req, res){
+  try {
+    let sluzba = req.body.sluzba;
+    let korisnikId = req.user.id;;
+    if(!sluzba){
+      return res.status(400).json({poruka: "Niste setovali ime sluzbe!"});
+    }
+    let rezultat = await User.izmeniSluzbu(korisnikId, sluzba);
+    if(!rezultat){
+      return res.status(400).json({poruka: "Doslo je do greske prilikom zamene podataka o sluzbi!"});
+    }
+    return res.status(201).json({poruka: "Uspesno izmenjeni podaci", korisnik: rezultat})
+  } catch (error) {
+    throw new AppError("Greska u izmenuSluzbu funkciji!" + error.message, 500);
+  }
+}
+
 async function detaljiKorisnik(req, res) {
   try {
     const korId = req.params["id"];
@@ -54,6 +71,7 @@ async function promeniLozinku(req, res) {
     throw new AppError("Greska u funkciji promeniLozinku" + error.message, 500);
   }
 }
+
 
 async function izmeniPodatke(req, res) {
   try {
@@ -99,5 +117,6 @@ module.exports = {
   detaljiKorisnik,
   promeniLozinku,
   izmeniPodatke,
+  izmeniSluzbu,
   listaKorisnika
 };

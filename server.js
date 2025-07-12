@@ -14,7 +14,13 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/avatars", express.static(path.join(__dirname, "uploads", "avatars")));
+
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+  next();
+});
 
 app.use(authRoutes);
 app.use(predmetRoutes);

@@ -11,8 +11,8 @@ router.get(
   controller.listaKorisnika
 );
 router.get("/api/users/:id", verifikujToken, controller.detaljiKorisnik);
-router.put("/api/users/:id", verifikujToken, controller.izmeniPodatke);
+router.put("/api/users/podaci/:id", verifikujToken, controller.izmeniPodatke);
 router.post("/api/users/avatar", verifikujToken, upload, controller.avatar);
 router.put("/api/users/password", verifikujToken, controller.promeniLozinku);
-
+router.put("/api/users/sluzba", verifikujToken, controller.izmeniSluzbu);
 module.exports = router;
