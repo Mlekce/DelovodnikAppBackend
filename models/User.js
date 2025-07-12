@@ -119,7 +119,7 @@ class User {
     try {
       const pool = await getPool();
       let upit =
-        "SELECT id, ime, email, uloga, sluzba, avatar FROM users WHERE id = ?";
+        "SELECT id, ime, email, uloga, sluzba, avatar, datum_registracije FROM users WHERE id = ?";
       let [rezultat] = await pool.query(upit, [idKor]);
       if (rezultat.length == 0) {
         return false;
