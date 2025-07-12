@@ -192,8 +192,9 @@ class User {
       if (!lozinkaOk) {
         return false;
       }
+      let encLozinka = await User.hashLozinke(novaLozinka);
       upit = "UPDATE users SET lozinka = ? WHERE id=(?)";
-      await pool.query(upit, [novaLozinka, korId]);
+      await pool.query(upit, [encLozinka, korId]);
       return true;
     } catch (error) {
       throw new AppError(

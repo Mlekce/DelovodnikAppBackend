@@ -61,11 +61,12 @@ async function promeniLozinku(req, res) {
     let novaLozinka = req.body.novaLozinka;
     let id = req.user.id;
     let rezultat = await User.zameniLozinku(id, staraLozinka, novaLozinka);
+    console.log(rezultat)
     rezultat
       ? res.status(201).json({ poruka: "Uspesno zamenjena lozinka!" })
       : res
           .status(400)
-          .json({ poruka: "Doslo je do greske pri zameni lozinke!" });
+          .json({ poruka: "Stara lozinka nije ispravna!" });
     return;
   } catch (error) {
     throw new AppError("Greska u funkciji promeniLozinku" + error.message, 500);
