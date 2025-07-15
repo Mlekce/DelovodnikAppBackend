@@ -16,4 +16,5 @@ router.put("/api/users/reset/:id", verifikujToken, verifikujAdministratora, cont
 router.post("/api/users/avatar", verifikujToken, upload, controller.avatar);
 router.put("/api/users/password", verifikujToken, controller.promeniLozinku);
 router.put("/api/users/sluzba", verifikujToken, controller.izmeniSluzbu);
+router.delete("/api/users/del/:id", verifikujToken, verifikujAdministratora, controller.izbrisiKorisnika);
 module.exports = router;

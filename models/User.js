@@ -236,6 +236,20 @@ class User {
     const [rezultat] = await pool.query(upit, [ime, uloga, sluzba, id]);
     return rezultat.affectedRows === 1;
   }
+
+  static async izbrisiKorisnika(id){
+    try {
+      const pool = await getPool();
+      const upit = "DELETE FROM users WHERE id=?"
+      const [rezultat] = await pool.query(upit, [id]);
+      return rezultat.affectedRows === 1;      
+    } catch (error) {
+      throw new AppError(
+        "Greska u funkciji izbrisiKorisnika" + error.message,
+        500
+      );
+    }
+  }
 }
 
 module.exports = User;

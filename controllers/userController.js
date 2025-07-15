@@ -133,11 +133,26 @@ async function listaKorisnika(req, res){
   }
 }
 
+async function izbrisiKorisnika(req, res){
+  try {
+    let id = req.body.id;
+    let rezultat = await User.izbrisiKorisnika(id);
+    rezultat ? res.status(200).json({poruka: "Operacija uspesno izvrsena."}):
+    res.status(400).json({poruka: "Korisnik nije ibrisan."});
+    return
+  }
+  catch (error) {
+    console.error(error);
+    throw new AppError("Greska u funkciji izbrisiKorisnika", 500);
+  }
+}
+
 module.exports = {
   avatar,
   detaljiKorisnik,
   promeniLozinku,
   resetLozinke,
   izmeniSluzbu,
-  listaKorisnika
+  listaKorisnika,
+  izbrisiKorisnika
 };
