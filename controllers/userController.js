@@ -73,7 +73,26 @@ async function promeniLozinku(req, res) {
   }
 }
 
+async function resetLozinke(req, res) {
+  try {
+    let novaLozinka = req.body.novaLozinka;
+    let id = req.body.id;
+    if(!id || !novaLozinka){
+      return res.status(400).json({ poruka: "Operacija nije uspela, podaci nisu ispravni!" });
+    }
+    let rezultat = await User.resetujLozinku(id, novaLozinka);
+    rezultat
+      ? res.status(201).json({ poruka: "Uspesno zamenjena lozinka!" })
+      : res
+          .status(400)
+          .json({ poruka: "Lozinka nije zamemenjena!" });
+    return;
+  } catch (error) {
+    throw new AppError("Greska u funkciji promeniLozinku" + error.message, 500);
+  }
+}
 
+/*
 async function izmeniPodatke(req, res) {
   try {
     const { ime, uloga, sluzba } = req.body;
@@ -102,6 +121,7 @@ async function izmeniPodatke(req, res) {
     return res.status(500).json({ poruka: "Greška na serveru." });
   }
 }
+*/
 
 async function listaKorisnika(req, res){
   try {
@@ -117,7 +137,7 @@ module.exports = {
   avatar,
   detaljiKorisnik,
   promeniLozinku,
-  izmeniPodatke,
+  resetLozinke,
   izmeniSluzbu,
   listaKorisnika
 };

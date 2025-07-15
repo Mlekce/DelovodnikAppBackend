@@ -107,7 +107,7 @@ class User {
           uloga: korisnik.uloga,
           sluzba: korisnik.sluzba,
           avatar: korisnik.avatar,
-          datum_registracije: korisnik.datum_registracije
+          datum_registracije: korisnik.datum_registracije,
         },
       };
     } catch (error) {
@@ -153,25 +153,25 @@ class User {
       let upit = "UPDATE users SET avatar = ? WHERE id=(?)";
       await pool.query(upit, [imeFajla, korId]);
       let rezultat = await User.povuciPodatke(korId);
-      if(!rezultat){
-        return false
+      if (!rezultat) {
+        return false;
       }
-      return rezultat
+      return rezultat;
     } catch (error) {
       throw new AppError("Greška u postaviAvatar: " + error.message, 500);
     }
   }
 
-  static async izmeniSluzbu(korId, sluzba){
+  static async izmeniSluzbu(korId, sluzba) {
     try {
       const pool = await getPool();
       const upit = "UPDATE users SET sluzba = ? WHERE id=(?)";
       await pool.query(upit, [sluzba, korId]);
       let rezultat = await User.povuciPodatke(korId);
-      if(!rezultat){
-        return false
+      if (!rezultat) {
+        return false;
       }
-      return rezultat
+      return rezultat;
     } catch (error) {
       throw new AppError("Greška u izmeniSluzbu: " + error.message, 500);
     }
@@ -192,6 +192,32 @@ class User {
       if (!lozinkaOk) {
         return false;
       }
+      let encLozinka = await User.hashLozinke(novaLozinka);
+      upit = "UPDATE users SET lozinka = ? WHERE id=(?)";
+      await pool.query(upit, [encLozinka, korId]);
+      return true;
+    } catch (error) {
+      throw new AppError(
+        "Greska u funkciji zameniLozinku" + error.message,
+        500
+      );
+    }
+  }
+
+  static async resetujLozinku(korId, novaLozinka) {
+    try {
+      let pool = await getPool();
+      let upit = "SELECT lozinka FROM users WHERE id = ?";
+      let [rezultat] = await pool.query(upit, [korId]);
+      if (rezultat.length == 0) {
+        return false;
+      }
+
+      let testLozinke = await User.validirajLozinku(novaLozinka);
+      if (!testLozinke) {
+        return false;
+      }
+
       let encLozinka = await User.hashLozinke(novaLozinka);
       upit = "UPDATE users SET lozinka = ? WHERE id=(?)";
       await pool.query(upit, [encLozinka, korId]);
