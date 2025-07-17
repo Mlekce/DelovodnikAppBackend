@@ -90,6 +90,69 @@ class Predmet {
     throw new AppError("Greska u funkciji posebnaPretraga!", 500);
   }
 }
+
+static async statistikaGodina() {
+  try {
+    let datum = new Date();
+    let godina = datum.getFullYear();
+    let danas = datum.toISOString().slice(0, 10);
+    let pocetakGodine = `${godina}-01-01`;
+
+    let pool = await getPool();
+    let upit = `
+      SELECT * FROM predmeti 
+      WHERE datum_unosa BETWEEN ? AND ?
+    `;
+
+    let [rezultat] = await pool.query(upit, [pocetakGodine, danas]);
+    return rezultat || false;
+  } catch (error) {
+    console.error("Greska u statistikaGodina:", error);
+    throw new AppError("Greska u funkciji statistikaGodina!", 500);
+  }
+}
+
+static async statistikaMesec() {
+  try {
+    let datum = new Date();
+    let godina = datum.getFullYear();
+    let mesec = String(datum.getMonth() + 1).padStart(2, '0');
+    let danas = datum.toISOString().slice(0, 10);
+    let pocetakMeseca = `${godina}-${mesec}-01`;
+
+    let pool = await getPool();
+    let upit = `
+      SELECT * FROM predmeti 
+      WHERE datum_unosa BETWEEN ? AND ?
+    `;
+
+    let [rezultat] = await pool.query(upit, [pocetakMeseca, danas]);
+    return rezultat || false;
+  } catch (error) {
+    console.error("Greska u statistikaMesec:", error);
+    throw new AppError("Greska u funkciji statistikaMesec!", 500);
+  }
+}
+
+static async statistikaDan() {
+  try {
+    let datum = new Date();
+    let danas = datum.toISOString().slice(0, 10);
+
+    let pool = await getPool();
+    let upit = `
+      SELECT * FROM predmeti 
+      WHERE DATE(datum_unosa) = ?
+    `;
+
+    let [rezultat] = await pool.query(upit, [danas]);
+    return rezultat || false;
+  } catch (error) {
+    console.error("Greska u statistikaDan:", error);
+    throw new AppError("Greska u funkciji statistikaDan!", 500);
+  }
+}
+
 }
 
 module.exports = Predmet;
