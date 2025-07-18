@@ -82,8 +82,34 @@ async function kreirajPredmet(req, res) {
   }
 }
 
+async function statistikaPredmeta(req, res){
+  let {id} = req.body;
+  try {
+    let godina = await User.statistikaGodina(id);
+    let mesec = await User.statistikaMesec(id);
+    let dan = await User.statistikaDan(id);
+    let nedelja = await User.statistikaNedelja(id);
+    let sedamDana = await User.statistikaNedeljaPoDanima(id);
+    return res
+    .status(200)
+    .json({
+      poruka: "Uspeh",
+      dan,
+      nedelja,
+      mesec,
+      godina,
+      sedamDana
+    });
+  } catch (error) {
+    console.error(error.message)
+    throw new AppError("Greska u statistikaPredmeta funkciji", 500);
+  }
+  
+}
+
 module.exports = {
   sviPredmeti,
   kreirajPredmet,
-  posebnaPretraga
+  posebnaPretraga,
+  statistikaPredmeta
 };
