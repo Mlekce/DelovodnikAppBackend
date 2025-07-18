@@ -108,11 +108,11 @@ class Predmet {
       let pool = await getPool();
       let upit = `
       SELECT COUNT(*) AS count FROM predmeti 
-      WHERE datum_unosa BETWEEN ? AND ? AND id = ?
+      WHERE datum_unosa BETWEEN ? AND ? AND korisnik_id = ?
     `;
 
       let [[{ count }]] = await pool.query(upit, [pocetakGodine, danas, ID]);
-      return count || false;
+      return count;
     } catch (error) {
       console.error("Greska u statistikaGodina:", error);
       throw new AppError("Greska u funkciji statistikaGodina!", 500);
@@ -130,11 +130,11 @@ class Predmet {
       let pool = await getPool();
       let upit = `
       SELECT COUNT(*) AS count FROM predmeti 
-      WHERE datum_unosa BETWEEN ? AND ? AND id = ?
+      WHERE datum_unosa BETWEEN ? AND ? AND korisnik_id = ?
     `;
 
       let [[{ count }]] = await pool.query(upit, [pocetakMeseca, danas, ID]);
-      return count || false;
+      return count;
     } catch (error) {
       console.error("Greska u statistikaMesec:", error);
       throw new AppError("Greska u funkciji statistikaMesec!", 500);
@@ -149,11 +149,11 @@ class Predmet {
       let pool = await getPool();
       let upit = `
       SELECT COUNT(*) AS count FROM predmeti 
-      WHERE DATE(datum_unosa) = ? AND id = ?
+      WHERE DATE(datum_unosa) = ? AND korisnik_id = ?
     `;
 
       let [[{ count }]] = await pool.query(upit, [danas, ID]);
-      return count || false;
+      return count;
     } catch (error) {
       console.error("Greska u statistikaDan:", error);
       throw new AppError("Greska u funkciji statistikaDan!", 500);
@@ -172,11 +172,11 @@ class Predmet {
       let pool = await getPool();
       let upit = `
       SELECT COUNT(*) AS count FROM predmeti 
-      WHERE datum_unosa BETWEEN ? AND ? AND id = ?
+      WHERE datum_unosa BETWEEN ? AND ? AND korisnik_id = ?
     `;
 
       let [[{ count }]] = await pool.query(upit, [sedamDanaUnazad, danas, ID]);
-      return count || false;
+      return count;
     } catch (error) {
       console.error("Greska u statistikaNedelja:", error);
       throw new AppError("Greska u funkciji statistikaNedelja!", 500);
@@ -184,13 +184,13 @@ class Predmet {
   }
 
   static async statistikaNedeljaPoDanima(ID) {
-    let nedelja = {};
+    let nedelja = [];
     let datum = new Date();
     let sekunde = 86400 * 1000;
 
     try {
       let pool = await getPool();
-      let upit, index;
+      let upit;
 
       for (let i = 0; i < 7; i++) {
         let targetDate = new Date(datum.getTime() - i * sekunde);
@@ -198,14 +198,13 @@ class Predmet {
 
         upit = `
         SELECT COUNT(*) AS count FROM predmeti 
-        WHERE DATE(datum_unosa) = ? AND id = ?
+        WHERE DATE(datum_unosa) = ? AND korisnik_id = ?
       `;
         let [[{ count }]] = await pool.query(upit, [danas, ID]);
-        index = i + 1;
-        nedelja[index] = count;
+        nedelja.unshift({dan: danas, broj: count})
       }
 
-      return nedelja || false;
+      return nedelja;
     } catch (error) {
       console.error("Greska u statistikaNedeljaPoDanima:", error);
       throw new AppError("Greska u funkciji statistikaNedeljaPoDanima!", 500);

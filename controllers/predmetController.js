@@ -83,13 +83,14 @@ async function kreirajPredmet(req, res) {
 }
 
 async function statistikaPredmeta(req, res){
-  let {id} = req.body;
+  let id = req.query.id;
+  console.log(id)
   try {
-    let godina = await User.statistikaGodina(id);
-    let mesec = await User.statistikaMesec(id);
-    let dan = await User.statistikaDan(id);
-    let nedelja = await User.statistikaNedelja(id);
-    let sedamDana = await User.statistikaNedeljaPoDanima(id);
+    let godina = await Predmet.statistikaGodina(id);
+    let mesec = await Predmet.statistikaMesec(id);
+    let dan = await Predmet.statistikaDan(id);
+    let nedelja = await Predmet.statistikaNedelja(id);
+    let sedamDana = await Predmet.statistikaNedeljaPoDanima(id);
     return res
     .status(200)
     .json({
