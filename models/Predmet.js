@@ -201,13 +201,49 @@ class Predmet {
         WHERE DATE(datum_unosa) = ? AND korisnik_id = ?
       `;
         let [[{ count }]] = await pool.query(upit, [danas, ID]);
-        nedelja.unshift({dan: danas, broj: count})
+        nedelja.unshift({ dan: danas, broj: count });
       }
 
       return nedelja;
     } catch (error) {
       console.error("Greska u statistikaNedeljaPoDanima:", error);
       throw new AppError("Greska u funkciji statistikaNedeljaPoDanima!", 500);
+    }
+  }
+
+  static async statistikaPojedinacniMesec(id) {
+    let danas = new Date();
+    let datumi = [];
+    let podaci = [];
+
+    for (let i = 5; i >= 0; i--) {
+      let start = new Date(danas.getFullYear(), danas.getMonth() - i, 1);
+      let end = new Date(danas.getFullYear(), danas.getMonth() - i + 1, 1);
+
+      let startStr = `${start.getFullYear()}-${String(
+        start.getMonth() + 1
+      ).padStart(2, "0")}-01`;
+      let endStr = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-01`;
+
+      datumi.push([startStr, endStr]);
+    }
+
+    try {
+      let pool = await getPool();
+      let upit = `SELECT COUNT(*) AS count FROM predmeti WHERE datum_unosa >= ? AND datum_unosa < ? AND korisnik_id = ?`;
+
+      for (let i = 0; i < datumi.length; i++) {
+        const [rows] = await pool.query(upit, [datumi[i][0], datumi[i][1], id]);
+        podaci.push({mesec: i, broj: rows[0].count});
+      }
+
+      return podaci;
+    } catch (error) {
+      console.error("Greska u statistikaPojedinacniMesec:", error);
+      throw new AppError("Greska u funkciji statistikaPojedinacniMesec!", 500);
     }
   }
 }

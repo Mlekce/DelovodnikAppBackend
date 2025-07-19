@@ -91,6 +91,7 @@ async function statistikaPredmeta(req, res){
     let dan = await Predmet.statistikaDan(id);
     let nedelja = await Predmet.statistikaNedelja(id);
     let sedamDana = await Predmet.statistikaNedeljaPoDanima(id);
+    let sestMeseci = await Predmet.statistikaPojedinacniMesec(id);
     return res
     .status(200)
     .json({
@@ -99,7 +100,8 @@ async function statistikaPredmeta(req, res){
       nedelja,
       mesec,
       godina,
-      sedamDana
+      sedamDana,
+      sestMeseci
     });
   } catch (error) {
     console.error(error.message)
