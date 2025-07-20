@@ -250,6 +250,38 @@ class User {
       );
     }
   }
+
+  static async proveraEmailAdrese(email) {
+    const pool = await getPool();
+    try {
+      const upit = "SELECT email FROM users WHERE email = (?)";
+      let rezultat = await pool.query(upit, [email]);
+      if (rezultat[0].length > 0) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      throw new AppError(
+        "Greska prilikom provere naloga u funkciji proveraNaloga",
+        500
+      );
+    }
+  }
+
+  static async resetPass(email, newPass){
+    const pool = await getPool();
+    try {
+      let encPass = await User.hashLozinke(newPass);
+      const upit = "UPDATE users SET lozinka = ? WHERE email = ?";
+      await pool.query(upit, [encPass, email]);
+      return true
+    } catch(error){
+      throw new AppError(
+        "Greska prilikom provere naloga u funkciji resetPass",
+        500
+      );
+    }
+  }
 }
 
 module.exports = User;

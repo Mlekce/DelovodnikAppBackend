@@ -26,6 +26,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "mysql2": "^3.14.1",
+    "resend": "^4.7.0",
+    "uuid4": "^2.0.3",
     "validator": "^13.15.15"
   }
 }

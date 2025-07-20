@@ -1,4 +1,9 @@
 const User = require("../models/User");
+const uuid4 = require("uuid4");
+const Resend = require("resend");
+const AppError = require("../models/AppError");
+require("dotenv").config();
+
 
 async function register(req, res) {
   try {
@@ -66,8 +71,48 @@ async function me(req, res) {
   }
 }
 
+async function resetPassword(req, res){
+  try {
+    const email = req.body.email;
+
+    const emailProvera = await User.proveraEmailAdrese(email);
+    if(!emailProvera){
+      return res.status(400).json({ poruka: "Email adresa ne postoji" });
+    }
+
+    const novaLozinka = uuid4().slice(0, 10); 
+
+    await User.resetPass(email, novaLozinka);
+    await posaljiMejl(email, novaLozinka);
+
+    return res.status(200).json({ poruka: "Nova lozinka je poslata na e-mail." });
+
+  } catch (error) {
+    console.error("Greška u resetPassword:", error.message);
+    throw new AppError("Greška u funkciji resetPassword: " + error.message, 500);
+  }
+}
+
+async function posaljiMejl(email, novaLozinka) {
+  const resend = new Resend(process.env.ResendApiKey);
+  const { data, error } = await resend.emails.send({
+    from: 'onboarding@resend.dev',
+    to: `${email}`,
+    subject: 'Reset password',
+    html: `<strong>Vasa nova lozinka je:</strong><p>${novaLozinka}</p>`
+  });
+  
+  if(error){
+    console.log(error)
+    throw new AppError("Greska prilikom slanja email-a" + error.message, 500)
+  }
+
+  return true
+}
+
 module.exports = {
   register,
   login,
   me,
+  resetPassword
 };
