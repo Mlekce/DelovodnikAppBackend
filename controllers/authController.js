@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const uuid4 = require("uuid4");
-const Resend = require("resend");
+const {Resend} = require("resend");
 const AppError = require("../models/AppError");
 require("dotenv").config();
 
@@ -96,7 +96,7 @@ async function resetPassword(req, res){
 async function posaljiMejl(email, novaLozinka) {
   const resend = new Resend(process.env.ResendApiKey);
   const { data, error } = await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: "noreply@coded.in.rs",
     to: `${email}`,
     subject: 'Reset password',
     html: `<strong>Vasa nova lozinka je:</strong><p>${novaLozinka}</p>`
