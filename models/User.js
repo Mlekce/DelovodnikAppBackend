@@ -31,12 +31,12 @@ class User {
     }
   }
 
-  async signup() {
+  async signup(token) {
     try {
       if (!(await this.proveraNaloga())) {
         const pool = await getPool();
         let upit =
-          "INSERT INTO users (ime, email, lozinka, uloga, sluzba, avatar) VALUES (?,?,?,?,?,?)";
+          "INSERT INTO users (ime, email, lozinka, uloga, sluzba, avatar, token) VALUES (?,?,?,?,?,?,?)";
         let rezultat = await pool.query(upit, [
           this.ime,
           this.email,
@@ -44,6 +44,7 @@ class User {
           this.uloga,
           this.sluzba,
           this.avatar,
+          token,
         ]);
 
         return rezultat[0].affectedRows === 1;
@@ -77,6 +78,32 @@ class User {
     return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN || "1d",
     });
+  }
+
+  static async proveriAktivaciju(email) {
+    const pool = await getPool();
+    try {
+      const upit = "SELECT * FROM users WHERE email = ?";
+      const [rezultat] = await pool.query(upit, [email]);
+
+      if (rezultat.length === 0) {
+        return { status: "ne_postoji" };
+      }
+
+      const korisnik = rezultat[0];
+
+      if (korisnik.verifikovan) {
+        return { status: "verifikovan" };
+      }
+
+      if (!korisnik.token) {
+        return { status: "nije_verifikovan_bez_tokena" };
+      }
+
+      return { status: "nije_verifikovan_sa_tokenom", token: korisnik.token };
+    } catch (error) {
+      throw new AppError(`Greška u proveri aktivacije: ${error.message}`, 500);
+    }
   }
 
   static async login(email, lozinka) {
@@ -237,12 +264,12 @@ class User {
     return rezultat.affectedRows === 1;
   }
 
-  static async izbrisiKorisnika(id){
+  static async izbrisiKorisnika(id) {
     try {
       const pool = await getPool();
-      const upit = "DELETE FROM users WHERE id=?"
+      const upit = "DELETE FROM users WHERE id=?";
       const [rezultat] = await pool.query(upit, [id]);
-      return rezultat.affectedRows === 1;      
+      return rezultat.affectedRows === 1;
     } catch (error) {
       throw new AppError(
         "Greska u funkciji izbrisiKorisnika" + error.message,
@@ -268,20 +295,41 @@ class User {
     }
   }
 
-  static async resetPass(email, newPass){
+  static async resetPass(email, newPass) {
     const pool = await getPool();
     try {
       let encPass = await User.hashLozinke(newPass);
       const upit = "UPDATE users SET lozinka = ? WHERE email = ?";
       await pool.query(upit, [encPass, email]);
-      return true
-    } catch(error){
+      return true;
+    } catch (error) {
       throw new AppError(
         "Greska prilikom provere naloga u funkciji resetPass",
         500
       );
     }
   }
+
+  static async aktivirajNalog(token) {
+  const pool = await getPool();
+  try {
+    const [rezultat] = await pool.query("SELECT * FROM users WHERE token = ?", [token]);
+
+    if (rezultat.length === 0) {
+      return false;
+    }
+
+    const upit = "UPDATE users SET verifikovan = ?, token = NULL WHERE token = ?";
+    await pool.query(upit, [true, token]);
+
+    return true;
+  } catch (error) {
+    throw new AppError(
+      "Greška prilikom aktivacije naloga u funkciji aktivirajNalog: " + error.message,
+      500
+    );
+  }
+}
 }
 
 module.exports = User;
