@@ -246,6 +246,18 @@ class Predmet {
       throw new AppError("Greska u funkciji statistikaPojedinacniMesec!", 500);
     }
   }
+
+  static async izbrisiPredmet(id){
+    try {
+      let pool = await getPool();
+      let upit = `DELETE FROM predmeti WHERE id=?`;
+      let [rezultat] = await pool.query(upit, [id]);
+      return rezultat.affectedRows > 0
+    } catch (error) {
+      console.error("Greska u izbrisiPredmet:", error);
+      throw new AppError("Greska u funkciji izbrisiPredmet!", 500);
+    }
+  }
 }
 
 module.exports = Predmet;

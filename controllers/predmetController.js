@@ -84,7 +84,6 @@ async function kreirajPredmet(req, res) {
 
 async function statistikaPredmeta(req, res){
   let id = req.query.id;
-  console.log(id)
   try {
     let godina = await Predmet.statistikaGodina(id);
     let mesec = await Predmet.statistikaMesec(id);
@@ -110,9 +109,26 @@ async function statistikaPredmeta(req, res){
   
 }
 
+async function obrisiPredmet(req, res) {
+  try {
+     let id = req.body.id;
+    if(!id){
+      return res.status(400).json({poruka: "Parametar id nije setovan."})
+    }
+    let rezultat = await Predmet.izbrisiPredmet(id);
+    rezultat ? res.status(200).json({poruka: "Uspesno izbrisan predmet"}) :
+    res.status(400).json({poruka: "Predmet nije izbrisan!"})
+    return
+  } catch (error) {
+    console.error(error.message)
+    throw new AppError("Greska u obrisiPredmet funkciji", 500);
+  }
+}
+
 module.exports = {
   sviPredmeti,
   kreirajPredmet,
   posebnaPretraga,
-  statistikaPredmeta
+  statistikaPredmeta,
+  obrisiPredmet
 };
